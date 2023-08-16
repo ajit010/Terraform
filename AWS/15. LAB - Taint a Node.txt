@@ -1,0 +1,25 @@
+LAB : TAINT A NODE :
+
+provider "aws" {
+  region     = "us-east-2"
+}
+
+resource "aws_instance" "myec2" {
+   ami = "ami-064ff912f78e3e561"
+   instance_type = "t2.micro"
+}
+
+
+--- Taint Command
+
+terraform taint aws_instance.myec2
+
+--- check the state file status tab 
+
+
+--- untaint command
+
+terraform untaint aws_instance.myec2
+
+
+********************************************************************

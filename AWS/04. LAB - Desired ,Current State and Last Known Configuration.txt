@@ -1,0 +1,34 @@
+Lab: Desired ,current state and last known configuration :
+
+-- create an ec2 instance using iac and t2.micro
+
+-- check the management console for the current state of the instance
+
+-- change the instance type to t2.nano from management console
+
+--- now check the tfstate file , are there any changes ?
+
+-- terraform refresh or terraform plan to scan the env and update the tf state file
+
+---now check the tfstate file again to see if there is any change in last known configuration
+
+--- now again do terraform apply with t2. micro still in iac file
+
+*************************************************************************
+
+CHALLENGE WITH DESIRED AND CURRENT STATE :                  :
+
+---  apply the firstec2.tf again and create a server.
+
+--- create custom security group and replace the default security group with it in instance through mngemnt console.
+
+---- terraform refresh to update tf state file
+
+---- check the tfstate file
+
+--- now do terraform apply and see if it chnges bck to default security group
+
+--- we will notice it doesnt changes becoz we have not mentioned the security groups resource block in our iac which is the desired state.
+
+********************************************************************************
+

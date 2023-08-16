@@ -1,0 +1,27 @@
+LAB : terraform import :
+
+--- create a server manually :  name :terraform-ec2 , ami-05fa00d4c63e32376 , key - terraform-key , 
+,default : sg-0c73499b2b47ff228 ,
+
+
+ec2.tf
+resource "aws_instance" "web" {
+  ami           = "ami-05fa00d4c63e32376"
+  instance_type = "t2.micro"
+  vpc_security_group_ids = ["sg-0c73499b2b47ff228"]
+  key_name = "terraform-key"
+  tags = {
+    Name = "terraform-ec2"
+  }
+}
+providers.tf
+provider "aws" {
+  region     = "us-east-1"
+  access_key = "YOUR-KEY"
+  secret_key = "YOUR-KEY"
+}
+
+Command To Import Resource
+terraform import aws_instance.web i-0f46ca5bb81b2c828
+
+****************************************************************

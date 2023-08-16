@@ -1,0 +1,57 @@
+LAB: WORKSPACE :
+
+---Terraform Based Configuration File :
+
+provider "aws" {
+  region     = "us-east-2"
+
+}
+
+resource "aws_instance" "myec2" {
+   ami = "ami-064ff912f78e3e561"
+   instance_type = lookup(var.instance_type,terraform.workspace)
+tags = {
+    Name = lookup(var.name,terraform.workspace)
+  }
+}
+
+variable "instance_type" {
+  type = map
+
+  default = {
+    default = "t2.nano"
+    dev     = "t2.micro"
+    prod     = "t2.large"
+  }
+}
+
+variable "name"{
+type=map
+default= {
+default="IT server"
+dev="dev-server"
+prod="prod-server"
+}
+}
+
+
+
+--- after creating the code , do terraform workspace show
+
+--- in default wrkspace , do terraform plan 
+
+-- create a workspace prod and dev as well
+
+terraform workspace new dev
+
+terraform workspace new prod
+
+----  switch to dev
+
+terraform workspace select dev
+
+--- terraform plan
+
+-- and same for prod and see the diff in instance types..
+ 
+******************************************************************

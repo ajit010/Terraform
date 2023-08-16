@@ -1,0 +1,72 @@
+Installation 
+=============================
+https://www.terraform.io/downloads
+
+First of all, create an ec2 instance on AWS where you will be running all these commands and then log into the server using public IP of ec2-instance.
+
+--in user data while creating main -tf-linux server :
+
+#!/bin/bash
+sudo echo -e "Tech@2020\nTech@2020" | passwd root;
+sudo cp -p /etc/ssh/sshd_config /etc/ssh/sshd_config_backup;
+sudo sed -i 's/^PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config;
+sudo sed -i 's/^PermitRootLogin*/PermitRootLogin yes/' /etc/ssh/sshd_config;
+sudo echo "PermitRootLogin yes" >> /etc/ssh/sshd_config;
+sudo systemctl restart sshd;
+sudo systemctl stop firewalld
+sudo systemctl disable firewalld
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+username- ssh root@publicip
+password-  Tech@2020
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-- copy the commands for linux host for the installation and then check version
+
+For Ubuntu/Debian -
+
+$ wget -O- httpsapt.releases.hashicorp.comgpg  sudo gpg --dearmor -o usrsharekeyringshashicorp-archive-keyring.gpg
+
+$ echo deb [signed-by=usrsharekeyringshashicorp-archive-keyring.gpg] httpsapt.releases.hashicorp.com $(lsb_release -cs) main  sudo tee etcaptsources.list.dhashicorp.list
+
+$ sudo apt update && sudo apt install terraform
+
+
+For CentOS/RHEL -
+
+$ sudo yum install -y yum-utils
+
+$ sudo yum-config-manager --add-repo httpsrpm.releases.hashicorp.comRHELhashicorp.repo
+
+$ sudo yum -y install terraform
+
+
+For Amazon Linux -
+
+$ sudo yum install -y yum-utils shadow-utils
+
+$ sudo yum-config-manager --add-repo 
+httpsrpm.releases.hashicorp.comAmazonLinuxhashicorp.repo
+
+$ sudo yum -y install terraform
+
+
+--confirm installation and check version -
+
+terraform --version
+
+---------------------------------------------------------------------------
+
+
+Access key ID
+AKIAZ3S6MYW2SUCPYHMA 
+Secret access key
+efXng5CW3g+ipkxag2+YDGoMXlxIyCETbpdnDPLB 
+
+--configure aws account on your tf machine
+
+aws configure
+
+aws s3 ls
+
+***********************************************************************

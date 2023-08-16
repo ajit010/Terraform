@@ -1,0 +1,32 @@
+LAB : Modules :
+
+---- create a directory modules and projects .
+
+--- create ec2 directory in modules and project-A under projects directory.
+
+--- under ec2 directory create the source module ec2.tf for global use .
+
+resource "aws_instance" "s1" {
+instance_type= "t2.micro"
+ami= "ami-064ff912f78e3e561"
+}
+
+
+--- go to projects >> project-A directory and create the child module myec2.tf
+
+-- call the source module from myec2.tf 
+
+module "ec2module" {
+source ="../../modules/ec2"
+}
+
+
+--- Being under projects-A ,do terraform plan 
+
+--- terraform init
+
+--- terraform apply
+
+(if its giving an error , provide a provider block in project-A folder as well)
+
+**************************************************************************

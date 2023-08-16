@@ -1,0 +1,22 @@
+LAB : Splat expression :
+
+provider "aws" {
+  region     = "us-east-2"
+}
+resource "aws_iam_user" "lb" {
+  name = "iamuser.${count.index}"
+  count = 3
+  path = "/system/"
+}
+
+output "arns" {
+  value = aws_iam_user.lb[1].arn
+}
+
+-- terraform apply and see the output
+
+-- now try to use [*] instead of [1]
+
+-- terraform apply
+
+********************************************************************

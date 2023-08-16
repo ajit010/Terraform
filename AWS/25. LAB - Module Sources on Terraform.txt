@@ -1,0 +1,50 @@
+LAB: Module sources on terraform :
+
+--- local path source (already done in prev labs )
+
+--- github as source and not local 
+
+--- go to ur test-repo directory
+
+---- create a module in newly created myec2.tf file in test repo module that fetches the source code from github directly
+
+inst.tf  terraform.tfstate
+[root@ip-172-31-19-15 git]# cat inst.tf
+module "ec2module-prod" {
+source ="git::https://github.com/ramannkhanna2/myrepo.git"
+}
+
+
+
+--- terraform plan
+
+--- terraform init
+
+username :ramann
+password : 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
+
+(token : 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)
+
+--- terraform plan 
+
+---terraform apply
+
+***********************************************************************
+
+LAB: .gitignore to ignore any file to be commited :
+
+--- go to the test repo and do git status
+
+---- create a new file .gitignore and enter the file names u dont want to commit to github
+
+[root@ip-172-31-19-15 myrepo]# cat .gitignore
+.terraform.lock.hcl
+.terraform/
+terraform.tfstate
+
+
+--- save the .gitignore file and do git status again
+
+--- now files in .gitignore will not commit and rest will do
+
+******************************************************************** 

@@ -1,0 +1,50 @@
+Lab: Data source :
+
+---- create a server using iac 
+
+---try changing the region and see the error u get for ami
+
+---to avoid this error , use the data source block below :
+
+provider "aws" {
+  region     = "us-east-1"
+}
+
+data "aws_ami" "app_ami" {
+  most_recent = true
+  owners = ["amazon"]
+
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm*"]
+  }
+}
+
+resource "aws_instance" "instance-1" {
+    ami = data.aws_ami.app_ami.id
+   instance_type = "t2.micro"
+}
+
+
+---- try changing the regions now and ami will get change accordingly 
+
+********************************************************************************
+
+LAB : DEBUGGING :
+
+---- to start seeing terraform logs use
+
+export TF_LOG=TRACE
+
+--- to export it to a file
+
+export TF_LOG_PATH=/tmp/crash.log
+
+--- to remove logging 
+
+unset TF_LOG=TRACE   / unset TF_LOG
+
+unset TF_LOG_PATH
+
+**************************************************************************************

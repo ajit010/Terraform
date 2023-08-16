@@ -1,0 +1,23 @@
+LAB : UPDATE IN PLACE :
+
+provider "aws" {
+region= "us-east-2"
+}
+
+resource "aws_instance" "s1" {
+instance_type= "t2.micro"
+ami= "ami-064ff912f78e3e561"
+tags= {
+Name= "my-server"
+}
+}
+
+--- try changing the tag or instance type in iac and execute the code again
+
+--- UPDATE DISRUPTIVE
+
+--- now try changing the ami in above code and then do terraform plan , 
+you will notice the change disrupting the already created server
+
+
+**************************************************************************

@@ -1,0 +1,73 @@
+LAB :LARGE INFRA :
+
+provider "aws" {
+  region     = "us-east-2"
+}
+
+
+resource "aws_security_group" "allow_ssh_conn" {
+  name        = "allow_ssh_conn"
+  description = "Allow SSH inbound traffic"
+  vpc_id      = "vpc-09db8688d039eb48a"
+
+  ingress {
+    description = "SSH into VPC"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  ingress {
+    description = "HTTP into VPC"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    description = "Outbound Allowed"
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+
+resource "aws_instance" "myec2" {
+   ami = "ami-0568773882d492fc8"
+   instance_type = "t2.micro"
+}
+
+resource "aws_ebs_volume" "db_ebs" {
+  availability_zone = "us-east-2a"
+  size              = 1
+}
+
+resource "aws_iam_user" "user" {
+  name = "khanna"
+  tags = {
+    env = "Dev"
+  }
+}
+
+resource "aws_s3_bucket" "mybucket" {
+  bucket = "ramnn-bucket"
+}
+
+resource "aws_eip" "eip" {
+  vpc      = true
+}
+
+--- terraform plan
+
+--- use below command to specify target and lower the api calls due to large infra :
+
+terraform plan -target aws_ebs_volume.db_ebs
+
+terraform plan -target aws_security_group.allow_ssh_conn
+
+terraform plan -refresh=false
+
+
+****************************************************************************

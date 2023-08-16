@@ -1,0 +1,45 @@
+
+LAB : INTEGRATING GIT FOR TEAM MGMT       :
+
+---- create an iac to upload it on Git :
+
+provider "aws" {
+region= "us-east-2"
+}
+
+resource "aws_instance" "s1" {
+instance_type= "t2.micro"
+ami = "ami-064ff912f78e3e561"
+}
+
+---- install git client
+
+yum install -y git
+
+--- clone the test git directory
+
+git clone https://github.com/ramannkhanna2/terraform-test.git
+
+--- username :ramann
+
+--  password is token : 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 (create new if dont have one)
+
+--- git repo " terraform-test " is created 
+
+-- move the source code file to cloned repo
+
+git add .
+
+git config --global user.email "raman.khanna@gmail.com"
+
+git config --global user.name "raman khanna"
+
+git commit -m "commiting first source code"
+
+git push
+
+git status
+
+----CHECK THE github website and source code is there or not
+
+**************************************************************

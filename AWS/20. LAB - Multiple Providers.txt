@@ -1,0 +1,31 @@
+LAB : MULTIPLE PROVIDERS    
+
+---- Create two servers  in two different regions using the same code using alias:
+
+
+provider "aws" {
+region = "us-east-1"
+}
+
+provider "aws" {
+region= "us-east-2"
+alias= "us2"
+}
+
+resource "aws_instance" "myec2" {
+   ami = "ami-064ff912f78e3e561"
+   instance_type = "t2.micro"
+provider = aws.us2
+tags= {
+Name= "US2server"
+}
+}
+resource "aws_instance" "myec22" {
+ ami = "ami-0c02fb55956c7d316"
+ instance_type= "t2.micro"
+tags= {
+Name= "US1server"
+}
+}
+
+**********************************************************************
