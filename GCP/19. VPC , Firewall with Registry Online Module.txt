@@ -1,0 +1,42 @@
+VPC , FIREWALL WITH REGISTRY ONLINE MODULE :
+
+root@test-tf-main:~# cat gmod.tf 
+provider "google" {
+credentials="./my-sa.json"
+}
+
+module "network_vpc" {
+  source  = "terraform-google-modules/network/google//modules/vpc"
+  version = "7.0.0"
+  network_name="raman-net"
+  project_id= "graphite-shell-387915"
+  # insert the 2 required variables here
+}
+
+module "network_firewall-rules" {
+  source  = "terraform-google-modules/network/google//modules/firewall-rules"
+  version = "7.0.0"
+  project_id   = "graphite-shell-387915"
+  network_name = "raman-net"
+  rules = [{
+    name                    = "allow-ssh-ingress"
+    description             = null
+    direction               = "INGRESS"
+    priority                = null
+    ranges                  = ["0.0.0.0/0"]
+    source_tags             = null
+    source_service_accounts = null
+    target_tags             = null
+    target_service_accounts = null
+    allow = [{
+      protocol = "tcp"
+      ports    = ["22"]
+    }]
+    deny = []
+    log_config = {
+      metadata = "INCLUDE_ALL_METADATA"
+    }
+  }]
+}
+
+================================================

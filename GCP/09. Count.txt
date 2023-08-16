@@ -1,0 +1,66 @@
+COUNT :
+
+provider "google" {
+  credentials = "./my-sa.json"
+  project     = "graphite-shell-387915"
+  region      = "us-central1"
+}
+
+resource "google_compute_instance" "instance-1" {
+  name         = "instance-1"
+  machine_type = "f1-micro"
+  zone         = "us-central1-a"
+  count        = 3
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-10"
+    }
+  }
+
+  network_interface {
+    network = "default"
+    access_config {
+      // Ephemeral IP
+    }
+  }
+}
+
+
+
+----- to create multiple resources with diff names :
+
+root@test-tf-main:~# cat file2.tf 
+provider "google" {
+  project="graphite-shell-387915"
+  credentials= "./my-sa.json"
+  region  = "us-central1"
+  zone    = "us-central1-a"
+}
+
+variable "elb-names" {
+  type    = list
+  default = ["dev-loadbalancer", "stage-loadbalancer", "prod-loadbalancer"]
+}
+
+resource "google_compute_instance" "s1" {
+  count         = 3
+  name          = var.elb-names[count.index]
+  machine_type  = "e2-micro"
+  zone          = "us-central1-a"
+  
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-10"
+    }
+  }
+
+  network_interface {
+    network = "default"
+    access_config {
+      // Ephemeral IP
+    }
+  }
+}
+
+---------------------------------------

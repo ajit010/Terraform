@@ -1,0 +1,63 @@
+WORKSPACE :
+
+
+root@test-tf-main:~# cat gmod.tf 
+provider "google" {
+credentials="./my-sa.json"
+  project = "your-project-id"
+}
+
+resource "google_compute_instance" "mygce" {
+  name         = lookup(var.name, terraform.workspace)
+  machine_type = lookup(var.machine_type, terraform.workspace)
+  zone         = "us-central1-a"
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-10"
+    }
+  }
+
+network_interface {
+    network = "default"
+    access_config {
+      // Ephemeral public IP
+    }
+  }
+
+
+}
+
+variable "machine_type" {
+  type = map
+
+  default = {
+    default = "f1-micro"
+    dev     = "n1-standard-1"
+    prod    = "n1-standard-2"
+  }
+}
+
+variable "name" {
+  type = map
+
+  default = {
+    default = "my-gce-instance"
+    dev     = "dev-gce-instance"
+    prod    = "prod-gce-instance"
+  }
+}
+
+
+ terraform workspace new dev
+  518  terraform workspace show
+  519  terraform plan
+  520  terraform workspace new prod
+  521  terraform plan
+  522  terraform select workspaceb default
+  523  terraform select workspace default
+  524  terraform workspace select default
+  525  terraform workspace list
+
+
+=================================================================================

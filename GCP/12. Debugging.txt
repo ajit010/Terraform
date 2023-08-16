@@ -1,0 +1,18 @@
+DEBUGGING :
+
+       export TF_LOG=TRACE
+  312  terraform plan
+  313  clear
+  314  export TF_LOG_PATH=/tmp/crash.log
+  315  cd /tmp/
+  316  ls
+  317  terraform plan
+  318  cd /home/centos/
+  319  ls
+  320  terraform plan
+  321  cd /tmp/
+  322  ls
+  323  cat crash.log
+
+
+====================================================

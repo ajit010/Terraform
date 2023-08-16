@@ -1,0 +1,43 @@
+COMPUTE INSTANCE BY REGISTRY MODULE :
+
+
+in order to create instance , we have to create template first ..
+
+
+root@test-tf-main:~# cat gmodtemp.tf 
+module "vm_instance_template" {
+  source = "terraform-google-modules/vm/google//modules/instance_template"
+  project_id="graphite-shell-387915"
+  service_account = {
+    email  = "my-sa-872@graphite-shell-387915.iam.gserviceaccount.com"
+    scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+  }
+  network="default" 
+
+  // other configuration options for the vm_instance_template module
+}
+
+
+---- now instance and declare hostname
+
+
+root@test-tf-main:~# cat gmod.tf 
+provider "google" {
+  credentials = "./my-sa.json"
+  project     = "graphite-shell-387915"
+  region =
+  zone =
+}
+
+
+module "vm_compute_instance" {
+  source  = "terraform-google-modules/vm/google//modules/compute_instance"
+  version = "8.0.1"
+  hostname="ramanserver"
+  instance_template="default-instance-template-20230621203128777000000001"
+
+
+** NOT SUCCESSFULL 
+
+
+======================================================================

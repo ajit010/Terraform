@@ -1,0 +1,41 @@
+provider "google" {
+  credentials = file("path/to/credentials.json")
+  project     = "your-project-id"
+  region      = "us-central1"
+}
+
+resource "google_compute_instance" "mygcpserver" {
+  name         = "my-gcp-instance"
+  machine_type = var.type
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-10"
+    }
+  }
+
+  tags = {
+    Name = "Techlanders-gcp-instance"
+  }
+}
+
+variable "type" {
+  default = "n1-standard-1"
+}
+
+
+----------
+
+terraform plan -var="type=n1-standard-2"
+
+
+---crt acustom.tfvars file with the following content:
+type = "n1-standard-4"
+
+
+terraform plan -var-file="custom.tfvars"
+
+
+
+
+-------------------------------------------------

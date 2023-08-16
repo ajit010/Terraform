@@ -1,0 +1,74 @@
+DYNAMIC BLOCK :
+
+root@test-tf-main:~# cat file2.tf 
+provider "google" {
+  project="graphite-shell-387915"
+  credentials= "./my-sa.json"
+}
+
+
+resource "google_compute_instance" "instance" {
+  name         = "server1"
+  machine_type = "e2-micro"
+  allow_stopping_for_update = true
+  zone        = "europe-west4-a"
+  depends_on= [google_compute_network.vpc_network, google_compute_subnetwork.test-subnetwork]
+
+  boot_disk {
+    initialize_params {
+      image = "centos-stream-8-v20221206"
+    }
+  }
+
+  # To keep the setup simple you can set the network_interface to default
+  # For Advance network setup refer to Point-7 : Setup Network and Firewall for virtual machine
+network_interface {
+    network = "vpc-network1"
+    subnetwork= "test-subnetwork"
+    access_config {
+      // Ephemeral public IP
+    }
+  }
+
+}
+
+resource "google_compute_network" "vpc_network" {
+  name = "vpc-network1"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "test-subnetwork" {
+  name          = "test-subnetwork"
+  ip_cidr_range = "192.168.10.0/24"
+  region        = "europe-west4"
+  network       = google_compute_network.vpc_network.id
+}
+
+resource "google_compute_firewall" "default" {
+  name    = "test-firewall"
+  network = google_compute_network.vpc_network.name
+  source_ranges= ["0.0.0.0/0"]
+  allow {
+    protocol = "icmp"
+  }
+
+dynamic "allow" {
+    for_each = var.port
+    iterator = firewall
+    content {
+      ports  = firewall.value[*]
+      protocol    = "tcp"
+    }
+  }
+
+}
+
+
+variable "port" {
+    type    = list
+    default = ["22", "8201", "443", "80", "9500"]
+  }
+
+
+
+======================================================================

@@ -1,0 +1,60 @@
+MULTIPLE PROVIDERS :
+
+
+root@test-tf-main:~# cat file2.tf 
+provider "google" {
+  credentials = "./my-sa.json"
+  project     = "graphite-shell-387915"
+  region="us-central1"
+}
+
+resource "google_compute_instance" "myinstance" {
+  name         = "us1-instance"
+  machine_type = "e2-micro"
+  zone         = "us-central1-a"
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-10"
+    }
+  }
+
+  network_interface {
+    network = "default"
+    access_config {
+      // Ephemeral public IP
+    }
+  }
+}
+root@test-tf-main:~# cat file3.tf 
+provider "google" {
+  alias="asia2"
+  credentials = "./my-sa.json"
+  project     = "graphite-shell-387915"
+  region="asia-south1"
+}
+
+
+
+resource "google_compute_instance" "myinstance2" {
+  provider = google.asia2
+  name         = "us2-instance"
+  machine_type = "e2-micro"
+  zone         = "asia-south1-a"
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-10"
+    }
+  }
+
+  network_interface {
+    network = "default"
+    access_config {
+      // Ephemeral public IP
+    }
+  }
+}
+
+
+============================================================

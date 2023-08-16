@@ -1,0 +1,20 @@
+GCS by online MODULES :
+
+
+root@test-tf-main:~# cat gmod.tf 
+provider "google" {
+credentials="./my-sa.json"
+}
+
+
+module "cloud-storage_simple_bucket" {
+  source  = "terraform-google-modules/cloud-storage/google//modules/simple_bucket"
+  version = "4.0.0"
+  name="raman-buckettttttttttt"
+  project_id="graphite-shell-387915"
+  location="asia-south1"
+# insert the 3 required variables here
+}
+
+
+==========================================

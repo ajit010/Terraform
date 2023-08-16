@@ -1,0 +1,262 @@
+IMPORT :
+
+name : raman-server
+name : raman-net
+name : ramnnn-bucketttttt
+
+
+
+root@test-tf-main:~# cat gmod.tf 
+provider "google" {
+credentials="./my-sa.json"
+  project = "graphite-shell-387915"
+  zone="us-west4-b"
+}
+
+resource "google_compute_instance" "mygce" {
+  name         = "raman-server"
+}
+
+resource "google_storage_bucket" "static" {
+  name          = "ramannnnnnn-buckettttttttt"
+}
+
+resource "google_compute_network" "vpc_network" {
+  name = "raman-net"
+}
+
+
+
+
+
+ 594  terraform import google_compute_instance.mygce 1829243621215954838
+  595  terraform show
+  596  ls
+  597  vi gmod.tf 
+  598  terraform import google_storage_bucket.static ramannnnnnn-buckettttttttt
+  599  terraform state list
+  600  vi gmod.tf 
+  601  terraform state list
+  604  terraform import google_compute_network.vpc_network raman-net
+  605  terraform state list
+
+
+
+=====================================================================================
+
+
+# google_client_config and kubernetes provider must be explicitly specified like the following.
+data "google_client_config" "default" {}
+
+provider "kubernetes" {
+  host                   = "https://${module.gke.endpoint}"
+  token                  = data.google_client_config.default.access_token
+  cluster_ca_certificate = base64decode(module.gke.ca_certificate)
+}
+
+module "gke" {
+  source                     = "terraform-google-modules/kubernetes-engine/google"
+  project_id                 = "techlanders-feb23"
+  name                       = "gke-test-1"
+  region                     = "us-central1"
+  zones                      = [ "us-central1-b"]
+  network                    = "default"
+  subnetwork                 = "default"
+  ip_range_pods              = "default-pod1"
+  ip_range_services          = "default-service1"
+  http_load_balancing        = false
+  network_policy             = false
+  horizontal_pod_autoscaling = true
+  filestore_csi_driver       = false
+
+  node_pools = [
+    {
+      name                      = "default-node-pool"
+      machine_type              = "e2-medium"
+      node_locations            = "us-central1-b"
+      min_count                 = 1
+      max_count                 = 2
+      local_ssd_count           = 0
+      spot                      = false
+      disk_size_gb              = 100
+      disk_type                 = "pd-standard"
+      image_type                = "COS_CONTAINERD"
+      enable_gcfs               = false
+      enable_gvnic              = false
+      auto_repair               = true
+      auto_upgrade              = true
+      service_account           = "634930918350-compute@developer.gserviceaccount.com"
+      preemptible               = false
+      initial_node_count        = 1
+    },
+  ]
+
+  node_pools_oauth_scopes = {
+    all = [
+      "https://www.googleapis.com/auth/logging.write",
+      "https://www.googleapis.com/auth/monitoring",
+    ]
+  }
+
+  node_pools_labels = {
+    all = {}
+
+    default-node-pool = {
+      default-node-pool = true
+    }
+  }
+
+  node_pools_metadata = {
+    all = {}
+
+    default-node-pool = {
+      node-pool-metadata-custom-value = "my-node-pool1"
+    }
+  }
+
+  node_pools_taints = {
+    all = []
+
+    default-node-pool = [
+      {
+        key    = "default-node-pool1"
+        value  = true
+        effect = "PREFER_NO_SCHEDULE"
+      },
+    ]
+  }
+
+  node_pools_tags = {
+    all = []
+
+    default-node-pool = [
+      "default-node-pool1",
+    ]
+  }
+}
+
+resource "kubernetes_deployment" "nginx" {
+  metadata {
+    name = "scalable-nginx-example"
+    labels = {
+      App = "ScalableNginxExample"
+    }
+  }
+
+  spec {
+    replicas = 2
+    selector {
+      match_labels = {
+        App = "ScalableNginxExample"
+      }
+    }
+    template {
+      metadata {
+        labels = {
+          App = "ScalableNginxExample"
+        }
+      }
+      spec {
+        container {
+          image = "nginx:1.7.8"
+          name  = "example"
+
+          port {
+            container_port = 80
+          }
+
+          resources {
+            limits = {
+              cpu    = "0.5"
+              memory = "512Mi"
+            }
+            requests = {
+              cpu    = "250m"
+              memory = "50Mi"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
+gke :
+
+us-central1 region
+create new vpc(10.0.0.0/24): raman-gke-net with sec ip ranges : raman-sec-range (10.0.1.0/24), raman-sec-range2 (10.0.2.0/24)
+
+uen on private access under sec range...
+
+gcloud compute networks subnets describe raman-subnetwork --region=us-central1
+
+create gke cluster using module
+
+
+give edior access to default generated sa : editor access
+# (principal is tf-gke-gke-test-1-9pz7@graphite-shell-387915.iam.gserviceaccount.com)
+
+UNSUCCESSFULL
+
+
+=================================
+
+
+create kube cluster in auto mode :
+
+--than authenticate ..
+
+gcloud container clusters get-credentials raman-cluster-auto --region us-central1 --project graphite-shell-387915
+  683  kubectl get pods
+  684  gcloud components install gke-gcloud-auth-plugin
+  685  sudo apt-get install google-cloud-sdk-gke-gcloud-auth-plugin
+  686  kubectl get pods
+  687  gcloud container clusters get-credentials raman-cluster-auto --region us-central1 --project graphite-shell-387915
+  688  kubectl get pods
+  689  gcloud components install kubectl
+  690  sudo apt-get install kubectl
+  691  kubectl get pods
+  692  kubectl get pods -A
+  693  kubectl get nodes -o wide
+
+
+than, 
+--- 
+
+
+
+==============================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

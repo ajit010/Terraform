@@ -1,0 +1,70 @@
+--LOCALS :
+
+root@test-tf-main:~# cat file2.tf 
+provider "google" {
+  project="graphite-shell-387915"
+  credentials= "./my-sa.json"
+}
+
+locals {
+  commontag-dev = {
+    owner   = "devops-team"
+    service = "backend"
+  }
+
+  commontag-prod = {
+    owner   = "prodteam"
+    service = "production"
+  }
+}
+
+resource "google_compute_instance" "app_dev" {
+  name         = "app-dev"
+  machine_type = "e2-micro"
+  zone         = "us-central1-a"
+
+labels= local.commontag-dev
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-10"
+    }
+  }
+
+  network_interface {
+    network = "default"
+    access_config {
+      // Ephemeral IP
+    }
+  }
+}
+
+resource "google_compute_instance" "db_prod" {
+  name         = "db-prod"
+  machine_type = "e2-micro"
+  zone         = "us-central1-a"
+
+labels= local.commontag-prod
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-10"
+    }
+  }
+
+  network_interface {
+    network = "default"
+    access_config {
+      // Ephemeral IP
+    }
+  }
+}
+
+resource "google_compute_disk" "db_disk" {
+  name             = "db-disk"
+  size             = 1
+  zone             = "us-central1-a"
+  physical_block_size_bytes = 4096
+
+labels = local.commontag-dev
+
+}
+======================================

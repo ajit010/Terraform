@@ -1,0 +1,39 @@
+LAB : Using variables to solve the problem    
+
+
+---- under /root/modules/instance  , modify the inst.tf file (source module) to use variables
+
+resource "aws_instance" "s1" {
+instance_type= var.instancetype
+ami= "ami-064ff912f78e3e561"
+}
+
+----- variables.tf file
+
+variable "instancetype" {
+default = "t2.micro"
+}
+
+
+---- under /root/projects/project-A , create two env files which will use differenct instance types :
+
+--- myec2.tf for dev env :
+
+module "ec2module-dev" {
+source ="../../modules/ec2"
+instancetype="t2.nano"
+}
+
+-- we can create a prject B and inside it as well an myinst.tf ..
+
+---- myec2.tf-prod for prod env :
+
+module "ec2module-prod" {
+source ="../../modules/ec2"
+}
+
+
+---- terraform init and  apply  .
+
+
+============================================

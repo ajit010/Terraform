@@ -1,0 +1,44 @@
+OUTPUT:
+
+provider "google" {
+  credentials = file("path/to/credentials.json")
+  project     = "your-project-id"
+  region      = "us-central1"
+}
+
+resource "google_compute_instance" "mygcpserver" {
+  name         = "my-gcp-instance"
+  machine_type = "n1-standard-1"
+  zone         = "us-central1-a"
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-10"
+    }
+  }
+  network_interface {
+    network = "default"
+    access_config {}
+  }
+  tags = ["gcp-instance"]
+}
+
+output "mygcpserver-ip" {
+  value = google_compute_instance.mygcpserver.network_interface[0].access_config[0].nat_ip
+}
+
+output "mygcpserver-type" {
+  value = google_compute_instance.mygcpserver.machine_type
+}
+
+resource "google_storage_bucket" "mygcpbucket" {
+  name     = "my-gcp-bucket"
+  location = "us-central1"
+}
+
+output "mygcpbucket" {
+  value = google_storage_bucket.mygcpbucket.self_link
+}
+
+
+==============================================================
+

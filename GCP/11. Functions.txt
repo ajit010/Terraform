@@ -1,0 +1,63 @@
+FUNCTION : 
+
+root@test-tf-main:~# cat file1.tf 
+provider "google" {
+  credentials = "./my-sa.json"
+  project     = "graphite-shell-387915"
+}
+
+locals {
+  time = formatdate("DD MMM YYYY hh:mm ZZZ", timestamp())
+}
+
+variable "zone" {
+type=map
+default= {
+"us-central1"="us-central1-a"
+"us-east1"="us-east1-a"
+"asia-south1"="asia-south1-a"
+}
+}
+
+variable "region" {
+  default = "asia-south1"
+}
+
+variable "tags" {
+  type    = list
+  default = ["first-gcp-instance","second-gcp-instance"]
+}
+
+variable "image" {
+  type = map
+  default = {
+"us-central1"     = "debian-10-tf-1-15-5-v20210430"
+    "us-east1"     = "centos-7-v20200403"
+    "asia-south1"  = "ubuntu-2004-focal-arm64-v20230616"  
+}
+}
+
+resource "google_compute_instance" "app-dev" {
+  count         = 2
+  name          = element(var.tags,count.index)
+  machine_type  = "e2-medium"
+  zone= lookup(var.zone,var.region,"us-central1")
+  boot_disk {
+    initialize_params {
+      image = lookup(var.image, var.region, "debian-cloud/debian-10")
+    }
+  }
+network_interface {
+    network = "default"
+    access_config {
+      // Ephemeral IP
+    }
+  }
+
+}
+
+output "timestamp" {
+  value = local.time
+}
+
+=====================================================

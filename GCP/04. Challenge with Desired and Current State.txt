@@ -1,0 +1,18 @@
+CHALLENGE WITH DESIRED AND CURRENT STATE :                  :
+
+---  apply the firstec2.tf again and create a server.
+== make sure to remove both netwrk and subnetwrk paramtrs in intrfce block.
+
+--- create a new vpcnetwork and firewallpolicy  and replace the default security group with it in instance through mngemnt console.
+
+------
+---- terraform refresh to update tf state file
+
+---- check the tfstate file
+
+--- now do terraform apply and see if it chnges bck to default security group
+
+--- we will notice it doesnt changes becoz we have not mentioned the security groups resource block in our iac which is the desired state.
+
+
+=============================================================
