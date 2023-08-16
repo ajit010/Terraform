@@ -1,0 +1,17 @@
+Lab Desired ,current state and last known configuration 
+
+-- create an vm instance using iac and Standard_F2
+
+-- check the management console for the current state of the instance
+
+-- change the instance type to B1s from management console
+
+--- now check the tfstate file , are there any changes 
+
+-- terraform refresh or terraform plan to scan the env and update the tf state file
+
+---now check the tfstate file agn to see if there is any change in last knownconfiguration
+
+--- now again do terraform apply with B1s  still in iac file
+
+==========================================================================

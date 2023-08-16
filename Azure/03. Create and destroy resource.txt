@@ -1,0 +1,82 @@
+
+--- Azure Provider :
+
+provider "azurerm" {}
+
+terraform init
+
+--- Digital Ocean Provider:
+---- https://registry.terraform.io/providers/digitalocean/digitalocean/latest/docs
+
+terraform {
+  required_providers {
+    digitalocean = {
+      source = "digitalocean/digitalocean"
+      version = "2.5.0"
+    }
+  }
+}
+
+provider "digitalocean" {}
+
+terraform init
+
+--- delete azure and digital ocean files.
+
+--  https://registry.terraform.io/providers/integrations/github/latest/docs
+
+---- in app1 directory , create another file name gitrepo.tf
+
+--  vi
+
+terraform {
+  required_providers {
+    github = {
+      source = "integrations/github"
+      version = "4.22.0"
+    }
+  }
+}
+
+provider "github" {
+  token = var.token # or `GITHUB_TOKEN`
+}
+
+
+--- go to github , developer settings 
+---- generate a token in github to add it into the iac
+--- add the permissions for repo
+
+token : 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
+
+add the token in above iac
+
+----  https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository
+
+-- add the repo to git account using iac 
+
+resource "github_repository" "repo" {
+  name        = "terraform-repo"
+  description = "tf-testrepo"
+
+  visibility = "private"
+
+ 
+}
+
+--- after adding above repo resource block as well , validate , plan and apply it.
+
+your resources will be created accordingly.
+
+
+
+terraform destroy
+
+--again create by applying 
+
+--if u want to target destroy of one resource :
+
+terraform destroy -target github_repository.repo
+
+
+---------------------------------

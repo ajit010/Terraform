@@ -1,0 +1,139 @@
+VARIABLES LAB :
+
+
+storageacc.tf  terraform.tfstate  terraform.tfstate.backup  variable.tf  vm.tf
+root@raman-test-vm:/home/azureuser# cat vm.tf
+provider "azurerm" {
+  features {}
+}
+
+resource "azurerm_resource_group" "rg" {
+  name     = var.rgname
+  location = var.location
+}
+
+resource "azurerm_virtual_network" "network" {
+  name                = "raman-network"
+  address_space       = ["10.0.0.0/16"]
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+}
+
+resource "azurerm_subnet" "subnet" {
+  name                 = "raman-subnet"
+  resource_group_name  = azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.network.name
+  address_prefixes     = ["10.0.2.0/24"]
+}
+
+resource "azurerm_network_interface" "nic" {
+  name                = "raman-nic"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.subnet.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id= azurerm_public_ip.pubIP.id
+  }
+}
+
+
+resource "azurerm_public_ip" "pubIP" {
+  name                = "PublicIp"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  allocation_method   = "Static"
+
+  tags = {
+    environment = "Production"
+  }
+}
+
+resource "azurerm_linux_virtual_machine" "vm" {
+  name                = "raman-machine"
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  size                = "Standard_F2"
+  disable_password_authentication="false"
+  admin_username      = "adminuser"
+  admin_password      = "Rmankhn@2023"
+  network_interface_ids = [
+    azurerm_network_interface.nic.id,
+  ]
+
+os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "16.04-LTS"
+    version   = "latest"
+  }
+}
+
+resource "azurerm_subnet_network_security_group_association" "associate" {
+  subnet_id                 = azurerm_subnet.subnet.id
+  network_security_group_id = azurerm_network_security_group.sg.id
+}
+
+resource "azurerm_network_security_group" "sg" {
+  name                = "raman-sg"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  security_rule {
+    name                       = "test123"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "80"
+    destination_port_range     = "80"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  tags = {
+    environment = "Production"
+  }
+}
+
+
+output "raman-subnetCIDR" {
+  value = [azurerm_subnet.subnet.address_prefix]
+}
+
+output "raman-rgName" {
+ value = [azurerm_resource_group.rg.name]
+}
+
+output "raman-pubIp" {
+ value = [azurerm_public_ip.pubIP.ip_address]
+}
+
+output "raman-pvtIP" {
+value = [azurerm_linux_virtual_machine.vm.private_ip_address]
+}
+
+output "raman-sgRule-details" {
+value = [azurerm_network_security_group.sg.security_rule]
+}
+root@raman-test-vm:/home/azureuser# cat variable.tf
+variable "location" {
+default = "West US"
+}
+
+variable "rgname" {
+default= "raman-rg"
+}
+
+variable "saname" {
+default= "ramanstorage"
+}
+
+----------------
